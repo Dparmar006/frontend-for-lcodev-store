@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
-
+import Base from "./Base";
 import { getProducts } from "./helper/coreApiCalls";
+import "../style.css";
+import Card from "./Card";
+
 export default function Home() {
   const [products, setProducts] = useState([]);
   //    var,      how to change that var
@@ -8,7 +11,6 @@ export default function Home() {
 
   const loadAllProducts = () => {
     getProducts().then((data) => {
-      console.log(data);
       if (data.error) {
         setError(data.error);
         console.log(error);
@@ -23,17 +25,20 @@ export default function Home() {
   });
 
   return (
-    <div>
+    <Base
+      title="Home page"
+      description="Ipsum ex eu minim consectetur ullamco esse est."
+    >
       <h1>Home component</h1>
       <div className="row">
         {products.map((product, index) => {
           return (
-            <div key={index}>
-              <h1>{product.name}</h1>
+            <div key={index} className="col-4 mb-4">
+              <Card product={product} />
             </div>
           );
         })}
       </div>
-    </div>
+    </Base>
   );
 }
