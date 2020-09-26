@@ -3,13 +3,14 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 import PrivateRoutes from "./auth/helper/privateRoutes";
 
 import Home from "./core/Home";
+import Signup from "./user/Signup";
 
 const Routes = () => {
   return (
     <BrowserRouter>
       <Switch>
         <Route path="/" exact component={Home} />
-        <PrivateRoutes path="user/dashboard" exact /> /* component={} */
+        <Route path="/signup" exact component={Signup} />
       </Switch>
     </BrowserRouter>
   );
