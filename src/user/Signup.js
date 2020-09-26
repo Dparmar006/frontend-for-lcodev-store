@@ -95,7 +95,7 @@ const Signup = () => {
             className="alert alert-success"
             style={{ display: success ? "" : "none" }}
           >
-            Your account has been created !
+            Your account has been created ! <Link to="/signin">Login</Link>
           </div>
         </div>
       </div>
@@ -109,7 +109,10 @@ const Signup = () => {
             className="alert alert-danger"
             style={{ display: error ? "" : "none" }}
           >
-            Something went wrong 😭
+            Something went wrong{" "}
+            <span role="img" aria-labelledby="crying emoji">
+              😭
+            </span>
           </div>
         </div>
       </div>

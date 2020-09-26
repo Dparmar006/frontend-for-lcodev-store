@@ -23,11 +23,20 @@ export const signin = (user) => {
     formData.append(name, user[name]);
   }
 
+  // const { email, password } = user;
+  // const formData = new FormData();
+  // formData.append("email", email);
+  // formData.append("password", password);
+
+  for (var key of formData.keys()) {
+    console.log("my key", key);
+  }
   return fetch(`${API}user/login/`, {
     method: "POST",
     body: formData,
   })
     .then((response) => {
+      console.log("sucess", response);
       return response.json();
     })
     .catch((err) => console.log(err));
