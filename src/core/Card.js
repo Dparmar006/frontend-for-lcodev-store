@@ -1,18 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import ImageHelper from "./helper/imageHelper";
 import { Redirect } from "react-router-dom";
 import { addItemToCart, removeItemFromCart } from "./helper/cartHelper";
-
-const isAuthenticated = true;
+import { isAuthenticated } from "../auth/helper";
 
 const Card = ({ product, addtoCart = true, removeFromCart = false }) => {
+  const [redirect, setRediret] = useState(false);
+
   const cartTitle = product ? product.name : "Static title";
   const cartDescription = product ? product.description : "Static description";
   const cartPrice = product ? product.price : "Static price";
 
   const addToCart = () => {
-    if (isAuthenticated) {
-      addItemToCart(product, () => {});
+    if (isAuthenticated()) {
+      addItemToCart(product, () => setRediret(true));
       console.log("Added to cart");
     } else {
       console.log("Login please");
@@ -57,6 +58,7 @@ const Card = ({ product, addtoCart = true, removeFromCart = false }) => {
     <div className="card text-white bg-dark border border-info ">
       <div className="card-header lead">{cartTitle}</div>
       <div className="card-body">
+        {getRedirect(redirect)}
         <ImageHelper product={product}></ImageHelper>
         <p className="lead bg-success font-weight-normal text-wrap">
           {cartDescription}
