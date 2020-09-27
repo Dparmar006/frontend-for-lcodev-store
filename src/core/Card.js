@@ -4,7 +4,13 @@ import { Redirect } from "react-router-dom";
 import { addItemToCart, removeItemFromCart } from "./helper/cartHelper";
 import { isAuthenticated } from "../auth/helper";
 
-const Card = ({ product, addtoCart = true, removeFromCart = false }) => {
+const Card = ({
+  product,
+  addtoCart = true,
+  removeFromCart = false,
+  reload = undefined,
+  setReload = (f) => f,
+}) => {
   const [redirect, setRediret] = useState(false);
 
   const cartTitle = product ? product.name : "Static title";
@@ -45,6 +51,7 @@ const Card = ({ product, addtoCart = true, removeFromCart = false }) => {
         <button
           onClick={() => {
             removeItemFromCart(product._id);
+            setReload(!reload);
             console.log("product removed from");
           }}
           className="btn btn-block btn-outline-danger mt-2 mb-2"
