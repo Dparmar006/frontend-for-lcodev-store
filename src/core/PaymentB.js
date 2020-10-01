@@ -11,7 +11,7 @@ const PaymentB = ({ products, reload = undefined, setReload = (f) => f }) => {
   const [info, setInfo] = useState({
     loading: false,
     success: false,
-    clientToken: null,
+    client_token: null,
     error: "",
     instance: {},
   });
@@ -20,7 +20,6 @@ const PaymentB = ({ products, reload = undefined, setReload = (f) => f }) => {
   const token = isAuthenticated && isAuthenticated().token;
 
   const getToken = (userId, token) => {
-    console.log(token, userId, "token is");
     getmeToken(userId, token).then((info) => {
       if (info.error) {
         setInfo({
@@ -32,16 +31,17 @@ const PaymentB = ({ products, reload = undefined, setReload = (f) => f }) => {
           return <Redirect to="/" />;
         });
       } else {
-        const clientToken = info.clientToken;
-        console.log(clientToken, "client token returned");
-        setInfo({ clientToken });
+        const client_token = info.client_token;
+
+        setInfo({ client_token: client_token });
       }
     });
   };
 
   useEffect(() => {
     getToken(userId, token);
-  }, []);
+  });
+
   const getAmount = () => {
     let amount = 0;
     products.map((p) => {
@@ -50,16 +50,100 @@ const PaymentB = ({ products, reload = undefined, setReload = (f) => f }) => {
     return amount;
   };
 
+  const onPurchase = () => {
+    setInfo({
+      loading: true,
+    });
+    let nonce;
+    console.log(info.instance, "instance");
+    let getNonce = info.instance
+      .requestPaymentMethod()
+      .then((data) => {
+        nonce = data.nonce;
+        const paymentData = {
+          paymentMethodNonce: nonce,
+          amount: getAmount(),
+        };
+        processPayment(userId, token, paymentData)
+          .then((response) => {
+            if (response.error) {
+              if (response.code == "1") {
+                console.log("payment failed");
+                signOut(() => {
+                  return <Redirect to="/" />;
+                });
+              }
+            } else {
+              setInfo({ ...info, success: response.success, loading: false });
+              console.log("Payment Success !");
+              let productNames = "";
+              products.forEach(function (item) {
+                products += item.name + ", ";
+              });
+
+              const orderData = {
+                products: productNames,
+                transaction_id: response.transaction.id,
+                amount: response.transaction.amount,
+              };
+
+              createOrder(userId, token, orderData)
+                .then((response) => {
+                  if (response.error) {
+                    if (response.code == "1") {
+                      console.log("Order Failed !");
+                    }
+                    signOut(() => {
+                      return <Redirect to="/" />;
+                    });
+                  } else {
+                    if (response.success == true) {
+                      console.log("Order placed");
+                    }
+                  }
+                })
+                .catch((error) => {
+                  setInfo({ loading: false, success: false });
+                  console.log("order failed !", error);
+                });
+              cartEmpty(() => {
+                console.log("crashed !, cart is empty");
+                setReload(!reload);
+              });
+            }
+          })
+          .catch((e) => console.log(e));
+      })
+      .catch((e) => console.log(e, "nonce err"));
+  };
+
   const showBtnDropIn = () => {
+    console.log(
+      "//////",
+      info.client_token,
+      "instace :",
+      info.instance,
+      "/////"
+    );
+
     return (
       <div>
-        {info.clientToken !== null && products.length > 0 ? (
+        {info.client_token !== null && products.length > 0 ? (
           <div>
             <DropIn
-              options={{ authorization: info.clientToken }}
-              onInstance={(instance) => (info.instance = instance)}
+              options={{ authorization: info.client_token }}
+              onInstance={(instance) =>
+                // (instance) => (info.instance = instance)
+                setInfo({
+                  ...info,
+                  instance: instance,
+                })
+              }
             ></DropIn>
-            <button className="btn btn-block btn-sucess">Pay</button>
+            {console.log(info.instance, "cant find instance")}
+            <button onClick={onPurchase} className="btn btn-block btn-success">
+              Pay
+            </button>
           </div>
         ) : (
           <h3>Cart is empty</h3>
@@ -67,9 +151,10 @@ const PaymentB = ({ products, reload = undefined, setReload = (f) => f }) => {
       </div>
     );
   };
+
   return (
     <div>
-      <h3> Your total: {getAmount()}</h3>
+      <h3> Your total: $ {getAmount()}</h3>
       {showBtnDropIn()}
     </div>
   );
