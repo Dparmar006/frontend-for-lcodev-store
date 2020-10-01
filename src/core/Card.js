@@ -50,7 +50,7 @@ const Card = ({
       removeFromCart && (
         <button
           onClick={() => {
-            removeItemFromCart(product._id);
+            removeItemFromCart(product.id);
             setReload(!reload);
             console.log("product removed from");
           }}
@@ -62,12 +62,12 @@ const Card = ({
     );
   };
   return (
-    <div className="card text-white bg-dark border border-info ">
+    <div className="card text-white bg-dark border border-muted m-2 ">
       <div className="card-header lead">{cartTitle}</div>
       <div className="card-body">
         {getRedirect(redirect)}
         <ImageHelper product={product}></ImageHelper>
-        <p className="lead bg-success font-weight-normal text-wrap">
+        <p className="lead bg-success font-weight-normal text-wrap mt-2 rounded">
           {cartDescription}
         </p>
         <p className="btn btn-success rounded  btn-sm px-4">$ {cartPrice}</p>

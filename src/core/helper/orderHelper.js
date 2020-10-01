@@ -6,14 +6,12 @@ export const createOrder = (userId, token, orderData) => {
   for (const name in orderData) {
     formData.append(name, orderData[name]);
   }
-  return fetch(`${API}order/add/${userId}/${token}/`{
+  return fetch(`${API}order/add/${userId}/${token}/`, {
     method: "POST",
-    body: formData
+    body: formData,
   })
-  .then(
-    response =>{
+    .then((response) => {
       return response.json();
-    }
-  )
-  .catch(error => console.log(error))
+    })
+    .catch((error) => console.log(error));
 };

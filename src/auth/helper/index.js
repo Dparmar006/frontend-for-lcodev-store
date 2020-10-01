@@ -50,11 +50,12 @@ export const authenticate = (data, next) => {
 };
 
 export const isAuthenticated = () => {
-  if (typeof window == undefined) {
+  if (typeof window === undefined) {
     return false;
   }
   if (localStorage.getItem("jwt")) {
     return JSON.parse(localStorage.getItem("jwt"));
+    //TODO: compare JWT with database json token
   } else {
     return false;
   }
