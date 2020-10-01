@@ -13,7 +13,7 @@ const PaymentB = ({ products, reload = undefined, setReload = (f) => f }) => {
     success: false,
     client_token: null,
     error: "",
-    instance: {},
+    instance: null,
   });
 
   const userId = isAuthenticated && isAuthenticated().user.id;
@@ -132,13 +132,7 @@ const PaymentB = ({ products, reload = undefined, setReload = (f) => f }) => {
           <div>
             <DropIn
               options={{ authorization: info.client_token }}
-              onInstance={(instance) =>
-                // (instance) => (info.instance = instance)
-                setInfo({
-                  ...info,
-                  instance: instance,
-                })
-              }
+              onInstance={(instance) => (info.instance = instance)}
             ></DropIn>
             {console.log(info.instance, "cant find instance")}
             <button onClick={onPurchase} className="btn btn-block btn-success">
